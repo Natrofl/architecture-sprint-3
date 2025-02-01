@@ -1,0 +1,76 @@
+@startuml
+title Диаграмма Контейнеров - Экосистема умного дома (SaaS)
+
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(client, "Клиент", "Пользователь системы умного дома")
+
+Container_Boundary(saashome, "Экосистема умного дома (SaaS)") {
+    Container(webApp, "Веб-приложение", "ReactJS", "Интерфейс управления домом и настройкой устройств")
+    Container(mobileApp, "Мобильное приложение", "Flutter", "Мобильный доступ для управления домом и мониторинга")
+    
+    Container(apiGateway, "API Gateway", "Kong", "Маршрутизация API-запросов и аутентификация")
+    
+    Container(smartControlService, "Сервис управления устройствами", "Node.js", "Управление устройствами и сценариями")
+    Container(smartControlCache, "Кеш управления устройствами", "Redis", "Кеширование данных для ускорения доступа")
+    
+    Container(deviceIntegrationService, "Сервис интеграции устройств", "Java", "Поддержка стандартных протоколов партнерских устройств")
+    Container(deviceIntegrationCache, "Кеш интеграции устройств", "Redis", "Кеширование данных для ускорения доступа")
+
+    Container(notificationService, "Сервис уведомлений", "Python", "Отправка уведомлений пользователям о событиях и изменениях")
+
+    Container(userRegistrationService, "Сервис регистрации пользователя", "Go", "Регистрация и управление учетными записями пользователей")
+    Container(userRegistrationCache, "Кеш регистрации пользователей", "Redis", "Кеширование данных для ускорения доступа")
+    
+    Container(deviceRegistrationService, "Сервис регистрации устройства", "Kotlin", "Регистрация и управление подключенными устройствами")
+    Container(deviceRegistrationCache, "Кеш регистрации устройств", "Redis", "Кеширование данных для ускорения доступа")
+    
+    Container(databaseSmartControl, "База данных управления устройствами", "Postgres", "Хранение данных о сценариях и управления устройствами")
+    
+    Container(databaseDeviceIntegration, "База данных интеграции устройств", "MongoDB", "Хранение конфигураций интеграции и данных телеметрии")
+    
+    Container(databaseNotification, "База данных уведомлений", "MongoDB", "Хранение шаблонов и журналов уведомлений")
+    
+    Container(databaseUser, "База данных пользователей", "Postgres", "Хранение информации о пользователях и учетных записях")
+    
+    Container(databaseDevice, "База данных устройств", "MongoDB", "Хранение конфигураций и данных подключенных устройств")
+    
+    Container(messageQueue, "Очередь сообщений", "RabbitMQ", "Асинхронное взаимодействие")
+}
+
+System_Ext(internet, "Интернет", "Связь для удаленного доступа к устройствам")
+
+System_Ext(partnerDevices, "Устройства партнеров", "Соблюдение стандартных протоколов")
+
+Rel(client, webApp, "Управление домашними устройствами и сценариями", "HTTPS")
+Rel(client, mobileApp, "Удалённый доступ через мобильное приложение", "HTTPS")
+
+Rel(webApp, apiGateway, "API-запросы")
+Rel(mobileApp, apiGateway, "API-запросы")
+
+Rel(apiGateway, smartControlService, "Управление и мониторинг устройств")
+Rel(apiGateway, deviceIntegrationService, "Подключение и управление устройствами")
+Rel(apiGateway, userRegistrationService, "Регистрация и управление учетными записями")
+Rel(apiGateway, deviceRegistrationService, "Регистрация устройств")
+
+Rel(smartControlService, smartControlCache, "Чтение/Запись кэшированых данных")
+Rel(deviceIntegrationService, deviceIntegrationCache, "Чтение/Запись кэшированых данных")
+Rel(userRegistrationService, userRegistrationCache, "Чтение/Запись кэшированых данных")
+Rel(deviceRegistrationService, deviceRegistrationCache, "Чтение/Запись кэшированых данных")
+
+Rel(smartControlService, messageQueue, "Асинхронные команды и сообщения")
+Rel(deviceIntegrationService, messageQueue, "Асинхронные обновления телеметрии")
+
+Rel(smartControlService, databaseSmartControl, "Чтение/Запись данных управления")
+Rel(deviceIntegrationService, databaseDeviceIntegration, "Чтение/Запись конфигураций и телеметрии")
+Rel(notificationService, databaseNotification, "Чтение/Запись уведомлений и журналов")
+Rel(userRegistrationService, databaseUser, "Чтение/Запись данных пользователей")
+Rel(deviceRegistrationService, databaseDevice, "Чтение/Запись данных устройств")
+
+Rel(deviceIntegrationService, partnerDevices, "Интеграция через стандартные протоколы")
+Rel(partnerDevices, internet, "Подключение к интернету")
+
+Rel(notificationService, apiGateway, "Уведомления и обновления статуса")
+Rel(notificationService, messageQueue, "Обработка и отправка уведомлений")
+
+@enduml

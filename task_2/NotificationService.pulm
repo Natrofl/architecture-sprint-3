@@ -1,0 +1,22 @@
+@startuml
+title Диаграмма Классов - Сервис уведомлений (Python)
+
+class NotificationLogic {
+    +sendNotification(userId, message)
+    +scheduleNotification(userId, message, time)
+}
+
+class ApiHandler {
+    +handleSendNotification(request)
+    +handleScheduleNotification(request)
+}
+
+class Logger {
+    +logInfo(message)
+    +logError(message)
+}
+
+ApiHandler -> NotificationLogic : Использует
+NotificationLogic -> Logger : Логирование уведомлений
+
+@enduml
