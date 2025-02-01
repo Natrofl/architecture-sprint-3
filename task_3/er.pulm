@@ -1,0 +1,67 @@
+@startuml
+title ER-диаграмма - Экосистема умного дома
+
+entity "User" as u {
+    * id : int <<PK>>
+    --
+    name : varchar(255)
+    email : varchar(255)
+    password_hash : varchar(255)
+    -- мелкие атрибуты для контактов и ролей
+    role : enum('admin', 'user')
+}
+
+entity "House" as h {
+    * id : int <<PK>>
+    --
+    user_id : int <<FK>>
+    name : varchar(255)
+    address : varchar(255)
+    -- регистрация нескольких зон
+    zones : int
+}
+
+entity "Device" as d {
+    * id : int <<PK>>
+    --
+    type_id : int <<FK>>
+    house_id : int <<FK>>
+    serial_number : varchar(50)
+    status : enum('active', 'inactive', 'maintenance')
+    -- добавление версии прошивки
+    firmware_version : varchar(50)
+}
+
+entity "DeviceType" as dt {
+    * id : int <<PK>>
+    --
+    name : varchar(255)
+    description : text
+}
+
+entity "Module" as m {
+    * id : int <<PK>>
+    --
+    device_id : int <<FK>>
+    name : varchar(255)
+    version : varchar(50)
+    -- детали связи и состояния
+    status : enum('active', 'inactive')
+}
+
+entity "TelemetryData" as t {
+    * id : int <<PK>>
+    --
+    device_id : int <<FK>>
+    timestamp : timestamp
+    data : json
+    -- добавление качества данных
+    data_quality : enum('good', 'average', 'poor')
+}
+
+u ||--o{ h : "owns"  // 1 пользователь имеет несколько домов
+h ||--o{ d : "hosts"  // дом содержит множество устройств
+d }o--|| dt : "is"  // устройство связано с типом устройства
+d ||--o{ m : "contains"  // устройство содержит модули
+d ||--o{ t : "generates"  // устройство генерирует телеметрию
+@enduml
