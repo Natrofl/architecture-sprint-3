@@ -1,0 +1,31 @@
+@startuml
+title Диаграмма Классов - Сервис регистрации пользователя (Go)
+
+class UserLogic {
+    +registerUser(userDetails)
+    +updateUser(userId, newDetails)
+    +deleteUser(userId)
+}
+
+class ApiHandler {
+    +handleUserRegistration(request)
+    +handleUserUpdate(request)
+}
+
+class CacheIntegration {
+    +setCache(key, value)
+    +getCache(key)
+    +invalidateCache(key)
+}
+
+class Logger {
+    +logInfo(message)
+    +logError(message)
+}
+
+ApiHandler -> UserLogic : Использует
+UserLogic -> CacheIntegration : Кэширует данные
+CacheIntegration -> Logger : Логирует кэш
+UserLogic -> Logger : Логирует операции
+
+@enduml

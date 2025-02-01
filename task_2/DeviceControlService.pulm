@@ -1,0 +1,38 @@
+@startuml
+title Диаграмма Классов - Сервис управления устройствами (Node.js)
+
+class ApiHandler {
+    +handleGetRequest(request, response)
+    +handlePostRequest(request, response)
+    +handlePutRequest(request, response)
+    +handleDeleteRequest(request, response)
+}
+
+class ControlLogic {
+    +executeCommand(deviceId, command)
+    +getDeviceStatus(deviceId)
+}
+
+class CacheIntegration {
+    +setCache(key, value)
+    +getCache(key)
+    +invalidateCache(key)
+}
+
+class DeviceManager {
+    +addDevice(device)
+    +removeDevice(deviceId)
+}
+
+class Logger {
+    +logInfo(message)
+    +logError(message)
+}
+
+ApiHandler -> ControlLogic : Использует
+ControlLogic -> CacheIntegration : Запрашивает
+CacheIntegration -> Logger : Отправляет сообщения
+ControlLogic -> Logger : Логирует операции
+ControlLogic -> DeviceManager : Управляет устройствами
+
+@enduml

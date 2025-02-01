@@ -1,0 +1,31 @@
+@startuml
+title Диаграмма Классов - Сервис регистрации устройства (Kotlin)
+
+class DeviceLogic {
+    +registerDevice(deviceDetails)
+    +updateDevice(deviceId, newDetails)
+    +removeDevice(deviceId)
+}
+
+class ApiHandler {
+    +handleDeviceRegistration(request)
+    +handleDeviceUpdate(request)
+}
+
+class CacheIntegration {
+    +setCache(key, value)
+    +getCache(key)
+    +invalidateCache(key)
+}
+
+class Logger {
+    +logInfo(message)
+    +logError(message)
+}
+
+ApiHandler -> DeviceLogic : Использует
+DeviceLogic -> CacheIntegration : Кэширует данные
+CacheIntegration -> Logger : Логирует кэш
+DeviceLogic -> Logger : Логирует операции
+
+@enduml

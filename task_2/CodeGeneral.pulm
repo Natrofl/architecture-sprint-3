@@ -1,0 +1,104 @@
+@startuml
+title Общая диаграмма Классов - Экосистема умного дома
+
+package "Сервис управления устройствами (Node.js)" {
+    class DeviceControlService {
+        +handleRequests()
+    }
+    class ApiHandler {
+        +handleGetRequest(request, response)
+        +handlePostRequest(request, response)
+        +handlePutRequest(request, response)
+        +handleDeleteRequest(request, response)
+    }
+    class ControlLogic {
+        +executeCommand(deviceId, command)
+        +getDeviceStatus(deviceId)
+    }
+    class CacheIntegration {
+        +setCache(key, value)
+        +getCache(key)
+        +invalidateCache(key)
+    }
+    class DeviceManager {
+        +addDevice(device)
+        +removeDevice(deviceId)
+    }
+    class Logger {
+        +logInfo(message)
+        +logError(message)
+    }
+    DeviceControlService -> ApiHandler
+    ApiHandler -> ControlLogic
+    ControlLogic -> CacheIntegration
+    ControlLogic -> DeviceManager
+    ControlLogic -> Logger
+}
+
+package "Сервис интеграции устройств (Java)" {
+    class DeviceIntegrationService {
+        +handleIntegration()
+    }
+    class ProtocolHandler {
+        +connectToDevice(device)
+        +disconnectDevice(deviceId)
+        +sendProtocolMessage(deviceId, message)
+    }
+    class ApiHandler {
+        +handleGetDeviceData(deviceId)
+        +handleIntegrationRequest(request)
+    }
+    class DeviceIntegrationManager {
+        +registerDeviceProtocol(deviceId, protocol)
+        +deregisterDeviceProtocol(deviceId)
+    }
+    DeviceIntegrationService -> ApiHandler
+    ApiHandler -> ProtocolHandler
+    ProtocolHandler -> CacheIntegration
+    DeviceIntegrationManager -> ProtocolHandler
+}
+
+package "Сервис уведомлений (Python)" {
+    class NotificationService {
+        +processNotifications()
+    }
+    class NotificationLogic {
+        +sendNotification(userId, message)
+        +scheduleNotification(userId, message, time)
+    }
+    NotificationService -> ApiHandler
+    ApiHandler -> NotificationLogic
+    NotificationLogic -> Logger
+}
+
+package "Сервис регистрации пользователя (Go)" {
+    class UserRegistrationService {
+        +processUserRegistrations()
+    }
+    class UserLogic {
+        +registerUser(userDetails)
+        +updateUser(userId, newDetails)
+        +deleteUser(userId)
+    }
+    UserRegistrationService -> ApiHandler
+    ApiHandler -> UserLogic
+    UserLogic -> CacheIntegration
+    UserLogic -> Logger
+}
+
+package "Сервис регистрации устройства (Kotlin)" {
+    class DeviceRegistrationService {
+        +processDeviceRegistrations()
+    }
+    class DeviceLogic {
+        +registerDevice(deviceDetails)
+        +updateDevice(deviceId, newDetails)
+        +removeDevice(deviceId)
+    }
+    DeviceRegistrationService -> ApiHandler
+    ApiHandler -> DeviceLogic
+    DeviceLogic -> CacheIntegration
+    DeviceLogic -> Logger
+}
+
+@enduml

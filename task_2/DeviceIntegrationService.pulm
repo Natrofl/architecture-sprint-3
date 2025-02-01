@@ -1,0 +1,37 @@
+@startuml
+title Диаграмма Классов - Сервис интеграции устройств (Java)
+
+class ProtocolHandler {
+    +connectToDevice(device)
+    +disconnectDevice(deviceId)
+    +sendProtocolMessage(deviceId, message)
+}
+
+class ApiHandler {
+    +handleGetDeviceData(deviceId)
+    +handleIntegrationRequest(request)
+}
+
+class CacheIntegration {
+    +setCache(key, value)
+    +getCache(key)
+    +invalidateCache(key)
+}
+
+class DeviceIntegrationManager {
+    +registerDeviceProtocol(deviceId, protocol)
+    +deregisterDeviceProtocol(deviceId)
+}
+
+class Logger {
+    +logInfo(message)
+    +logError(message)
+}
+
+ApiHandler -> ProtocolHandler : Использует
+ProtocolHandler -> CacheIntegration : Запрашивает
+CacheIntegration -> Logger : Логирует кэш
+ProtocolHandler -> Logger : Логирует операции
+DeviceIntegrationManager -> ProtocolHandler : Управляет протоколами
+
+@enduml
